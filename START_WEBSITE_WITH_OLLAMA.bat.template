@@ -1,0 +1,23 @@
+@echo off
+REM Template for Ollama (Free, runs locally)
+REM No API key needed! Just install Ollama from: https://ollama.com
+
+set AI_PROVIDER=ollama
+set OLLAMA_MODEL=llama3.2
+
+echo ============================================================
+echo PDF PAGE EXTRACTOR WEB APPLICATION
+echo ============================================================
+echo.
+echo Starting server with Ollama (Free Local AI)...
+echo Using model: %OLLAMA_MODEL%
+echo Open your browser and go to: http://localhost:5000
+echo.
+echo Press Ctrl+C to stop the server
+echo ============================================================
+echo.
+
+start http://localhost:5000
+python app.py
+
+pause

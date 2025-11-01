@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered PDF Splitter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .file-input-label:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .file-input-label.has-file {
+            background: #e7f3ff;
+            border-color: #2196F3;
+            border-style: solid;
+        }
+
+        .file-name {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .file-placeholder {
+            color: #666;
+        }
+
+        input[type="text"], textarea {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .examples {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .examples strong {
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .examples div {
+            margin: 5px 0;
+            padding-left: 10px;
+        }
+
+        .submit-btn, .ai-analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .ai-analyze-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .submit-btn:hover, .ai-analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active, .ai-analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled, .ai-analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        #aiResults {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        #aiResults.show {
+            display: block;
+        }
+
+        .suggestion-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggestion-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .suggestion-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .suggestion-card p {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .suggestion-card .pages {
+            background: #e7f3ff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 13px;
+            color: #0066cc;
+            margin-top: 10px;
+        }
+
+        .section-list {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .section-item {
+            margin: 8px 0;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-disabled-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">🤖📄</div>
+            <h1>AI-Powered PDF Splitter</h1>
+            <p>Upload a PDF and let AI suggest how to split it intelligently</p>
+            {% if ai_enabled %}
+            <span class="ai-badge">✨ AI Analysis Enabled</span>
+            {% endif %}
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="tabs">
+            {% if ai_enabled %}
+            <button class="tab active" onclick="switchTab('ai')">🤖 AI Analysis</button>
+            <button class="tab" onclick="switchTab('manual')">✋ Manual Split</button>
+            {% else %}
+            <button class="tab active" onclick="switchTab('manual')">✋ Manual Split</button>
+            {% endif %}
+        </div>
+
+        <!-- AI Analysis Tab -->
+        <div id="aiTab" class="tab-content {% if ai_enabled %}active{% endif %}">
+            {% if not ai_enabled %}
+            <div class="ai-disabled-notice">
+                <strong>AI Analysis Not Configured</strong>
+                <p>To enable AI-powered analysis, please set your API key. See the configuration guide in <code>config.env.example</code></p>
+            </div>
+            {% else %}
+            <form class="upload-form" id="aiForm">
+                <div class="form-group">
+                    <label for="ai_pdf_file">1. Upload PDF File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="pdf_file" id="ai_pdf_file" accept=".pdf" required>
+                        <label for="ai_pdf_file" class="file-input-label" id="aiFileLabel">
+                            <span class="file-placeholder">Click to choose a PDF file or drag & drop</span>
+                            <span class="file-name" style="display: none;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ai_question">2. Ask AI How to Split (Optional)</label>
+                    <textarea
+                        name="question"
+                        id="ai_question"
+                        placeholder="e.g., 'Split this by chapters' or 'Separate the introduction from the main content'"
+                    ></textarea>
+                    <div class="examples">
+                        <strong>Example Questions:</strong>
+                        <div>• "How should I split this textbook?"</div>
+                        <div>• "Separate by chapters"</div>
+                        <div>• "Split into introduction, main content, and appendix"</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="ai-analyze-btn" id="aiAnalyzeBtn">
+                    ✨ Analyze with AI
+                </button>
+            </form>
+
+            <div id="aiResults">
+                <div id="aiLoading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing your PDF...</p>
+                </div>
+                <div id="aiContent"></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Manual Split Tab -->
+        <div id="manualTab" class="tab-content {% if not ai_enabled %}active{% endif %}">
+            <div class="upload-form">
+                <div class="form-group">
+                    <label for="manual_pdf_file">1. Select PDF File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="pdf_file" id="manual_pdf_file" accept=".pdf" required>
+                        <label for="manual_pdf_file" class="file-input-label" id="manualFileLabel">
+                            <span class="file-placeholder">Click to choose a PDF file or drag & drop</span>
+                            <span class="file-name" style="display: none;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2. How do you want to split?</label>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <button type="button" class="tab" style="flex: 1; border: 2px solid #667eea;" onclick="setSplitMode('single')" id="singleModeBtn">
+                            📄 Single File
+                        </button>
+                        <button type="button" class="tab" style="flex: 1;" onclick="setSplitMode('multiple')" id="multipleModeBtn">
+                            📦 Multiple Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Single File Mode -->
+                <div id="singleFileMode" style="display: block;">
+                    <div class="form-group">
+                        <label for="pages">3. Specify Pages to Extract</label>
+                        <input
+                            type="text"
+                            name="pages"
+                            id="pages"
+                            placeholder="e.g., 1-10 or 1,3,5-8,12"
+                        >
+                        <div class="examples">
+                            <strong>Examples:</strong>
+                            <div>• <code>1-10</code> - Extract pages 1 through 10</div>
+                            <div>• <code>1,5,10</code> - Extract pages 1, 5, and 10</div>
+                            <div>• <code>1-5,8,10-15</code> - Extract pages 1-5, 8, and 10-15</div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="submit-btn" id="singleSubmitBtn" onclick="extractSingleFile()">
+                        Extract Pages
+                    </button>
+                </div>
+
+                <!-- Multiple Files Mode -->
+                <div id="multipleFilesMode" style="display: none;">
+                    <div class="form-group">
+                        <label>3. Define Sections to Extract</label>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                            💡 Each section will create a separate PDF file. Click "+ Add Another Section" to create multiple PDFs.
+                        </p>
+                        <div id="sectionsContainer">
+                            <div class="section-input" style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #ddd;">
+                                <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                                    <span style="color: #667eea; font-weight: bold; min-width: 80px;">Section 1:</span>
+                                    <input type="text" placeholder="Section name (e.g., Chapter 1)" class="section-name" style="flex: 2; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px;">
+                                    <input type="text" placeholder="Pages (e.g., 1-10)" class="section-pages" style="flex: 2; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px;">
+                                    <button type="button" onclick="removeSection(this)" style="background: #f44336; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;">✕</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addSection()" style="background: #4CAF50; color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px;">
+                            + Add Another Section
+                        </button>
+                    </div>
+
+                    <div class="examples" style="margin-top: 15px;">
+                        <strong>Example:</strong>
+                        <div>• Section: "Introduction" | Pages: "1-5"</div>
+                        <div>• Section: "Chapter 1" | Pages: "6-20"</div>
+                        <div>• Section: "Appendix" | Pages: "21-25"</div>
+                        <div style="margin-top: 10px; color: #f5576c;">📦 Will create 3 separate PDF files in a ZIP archive</div>
+                    </div>
+
+                    <button type="button" class="submit-btn" id="multipleSubmitBtn" onclick="extractMultipleFiles()">
+                        Create Multiple PDFs
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            if (tab === 'ai') {
+                tabs[0].classList.add('active');
+                document.getElementById('aiTab').classList.add('active');
+            } else {
+                tabs[{% if ai_enabled %}1{% else %}0{% endif %}].classList.add('active');
+                document.getElementById('manualTab').classList.add('active');
+            }
+        }
+
+        // Manual form file handling
+        const manualFileInput = document.getElementById('manual_pdf_file');
+        const manualFileLabel = document.getElementById('manualFileLabel');
+        if (manualFileLabel) {
+            const filePlaceholder = manualFileLabel.querySelector('.file-placeholder');
+            const fileName = manualFileLabel.querySelector('.file-name');
+
+            manualFileInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    const file = this.files[0];
+                    filePlaceholder.style.display = 'none';
+                    fileName.style.display = 'block';
+                    fileName.textContent = '📎 ' + file.name;
+                    manualFileLabel.classList.add('has-file');
+                } else {
+                    filePlaceholder.style.display = 'block';
+                    fileName.style.display = 'none';
+                    manualFileLabel.classList.remove('has-file');
+                }
+            });
+        }
+
+        // Split mode switching
+        function setSplitMode(mode) {
+            const singleMode = document.getElementById('singleFileMode');
+            const multipleMode = document.getElementById('multipleFilesMode');
+            const singleBtn = document.getElementById('singleModeBtn');
+            const multipleBtn = document.getElementById('multipleModeBtn');
+
+            if (mode === 'single') {
+                singleMode.style.display = 'block';
+                multipleMode.style.display = 'none';
+                singleBtn.style.borderColor = '#667eea';
+                singleBtn.style.color = '#667eea';
+                multipleBtn.style.borderColor = '#e0e0e0';
+                multipleBtn.style.color = '#666';
+            } else {
+                singleMode.style.display = 'none';
+                multipleMode.style.display = 'block';
+                singleBtn.style.borderColor = '#e0e0e0';
+                singleBtn.style.color = '#666';
+                multipleBtn.style.borderColor = '#667eea';
+                multipleBtn.style.color = '#667eea';
+            }
+        }
+
+        // Add section for multiple files
+        function addSection() {
+            const container = document.getElementById('sectionsContainer');
+            const sectionNumber = container.children.length + 1;
+            const newSection = document.createElement('div');
+            newSection.className = 'section-input';
+            newSection.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 2px solid #ddd;';
+            newSection.innerHTML = `
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                    <span style="color: #667eea; font-weight: bold; min-width: 80px;">Section ${sectionNumber}:</span>
+                    <input type="text" placeholder="Section name (e.g., Chapter ${sectionNumber})" class="section-name" style="flex: 2; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px;">
+                    <input type="text" placeholder="Pages (e.g., ${sectionNumber * 10 + 1}-${sectionNumber * 10 + 10})" class="section-pages" style="flex: 2; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px;">
+                    <button type="button" onclick="removeSection(this)" style="background: #f44336; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: 600;">✕</button>
+                </div>
+            `;
+            container.appendChild(newSection);
+            console.log(`Added section ${sectionNumber}. Total sections now: ${container.children.length}`);
+        }
+
+        // Remove section
+        function removeSection(button) {
+            const container = document.getElementById('sectionsContainer');
+            if (container.children.length > 1) {
+                button.closest('.section-input').remove();
+            } else {
+                alert('You must have at least one section!');
+            }
+        }
+
+        // Extract single file
+        function extractSingleFile() {
+            const fileInput = document.getElementById('manual_pdf_file');
+            const pages = document.getElementById('pages').value.trim();
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a PDF file first!');
+                return;
+            }
+
+            if (!pages) {
+                alert('Please specify which pages to extract!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('pdf_file', fileInput.files[0]);
+            formData.append('pages', pages);
+
+            showLoading('Extracting pages...');
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Extraction failed');
+                return response.blob();
+            })
+            .then(blob => {
+                hideLoading();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `extracted_pages_${pages.replace(/[^0-9,-]/g, '')}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                alert(`✅ Successfully extracted pages ${pages}!`);
+            })
+            .catch(error => {
+                hideLoading();
+                alert('❌ Error extracting pages. Please try again.');
+                console.error(error);
+            });
+        }
+
+        // Extract multiple files
+        function extractMultipleFiles() {
+            const fileInput = document.getElementById('manual_pdf_file');
+            const sections = [];
+
+            console.log('=== Starting section collection ===');
+            const allSectionDivs = document.querySelectorAll('.section-input');
+            console.log(`Found ${allSectionDivs.length} .section-input containers`);
+
+            allSectionDivs.forEach((sectionDiv, index) => {
+                const nameInput = sectionDiv.querySelector('.section-name');
+                const pagesInput = sectionDiv.querySelector('.section-pages');
+
+                const name = nameInput ? nameInput.value.trim() : '';
+                const pages = pagesInput ? pagesInput.value.trim() : '';
+
+                console.log(`Section ${index + 1}:`, { name, pages, hasName: !!name, hasPages: !!pages });
+
+                if (name && pages) {
+                    sections.push({ name, pages });
+                    console.log(`  ✓ Added to sections array`);
+                } else {
+                    console.log(`  ✗ Skipped (missing name or pages)`);
+                }
+            });
+
+            console.log('=== Collection complete ===');
+            console.log(`Total sections collected: ${sections.length}`);
+            console.log('Sections array:', sections);
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a PDF file first!');
+                return;
+            }
+
+            if (sections.length === 0) {
+                alert('Please define at least one section with name and pages!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('pdf_file', fileInput.files[0]);
+            formData.append('sections', JSON.stringify(sections));
+
+            console.log('Sending sections:', JSON.stringify(sections)); // Debug
+
+            showLoading(`Creating ${sections.length} PDF files...`);
+
+            fetch('/split-multiple', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Split failed');
+                return response.blob();
+            })
+            .then(blob => {
+                hideLoading();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `split_sections.zip`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                alert(`✅ Successfully created ${sections.length} PDF files!\n\nDownloaded as ZIP. Extract to see all PDFs.`);
+            })
+            .catch(error => {
+                hideLoading();
+                alert('❌ Error creating PDF files. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+
+        // Loading helpers
+        function showLoading(message) {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'manualLoading';
+            loadingDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 9999; text-align: center;';
+            loadingDiv.innerHTML = `
+                <div class="spinner"></div>
+                <p style="margin-top: 20px; color: #667eea; font-weight: 600;">${message}</p>
+            `;
+            document.body.appendChild(loadingDiv);
+        }
+
+        function hideLoading() {
+            const loadingDiv = document.getElementById('manualLoading');
+            if (loadingDiv) {
+                document.body.removeChild(loadingDiv);
+            }
+        }
+
+        // AI form file handling
+        const aiFileInput = document.getElementById('ai_pdf_file');
+        const aiFileLabel = document.getElementById('aiFileLabel');
+        if (aiFileLabel) {
+            const aiFilePlaceholder = aiFileLabel.querySelector('.file-placeholder');
+            const aiFileName = aiFileLabel.querySelector('.file-name');
+
+            aiFileInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    const file = this.files[0];
+                    aiFilePlaceholder.style.display = 'none';
+                    aiFileName.style.display = 'block';
+                    aiFileName.textContent = '📎 ' + file.name;
+                    aiFileLabel.classList.add('has-file');
+                } else {
+                    aiFilePlaceholder.style.display = 'block';
+                    aiFileName.style.display = 'none';
+                    aiFileLabel.classList.remove('has-file');
+                }
+            });
+        }
+
+        // AI form submission
+        const aiForm = document.getElementById('aiForm');
+        if (aiForm) {
+            aiForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(aiForm);
+                const aiAnalyzeBtn = document.getElementById('aiAnalyzeBtn');
+                const aiResults = document.getElementById('aiResults');
+                const aiLoading = document.getElementById('aiLoading');
+                const aiContent = document.getElementById('aiContent');
+
+                // Show loading
+                aiResults.classList.add('show');
+                aiLoading.style.display = 'block';
+                aiContent.innerHTML = '';
+                aiAnalyzeBtn.disabled = true;
+                aiAnalyzeBtn.textContent = 'Analyzing...';
+
+                try {
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    // Hide loading
+                    aiLoading.style.display = 'none';
+
+                    if (data.error) {
+                        aiContent.innerHTML = `
+                            <div class="alert alert-error">
+                                ${data.error}
+                            </div>
+                        `;
+                    } else {
+                        displayAIResults(data);
+                    }
+
+                } catch (error) {
+                    aiLoading.style.display = 'none';
+                    aiContent.innerHTML = `
+                        <div class="alert alert-error">
+                            Failed to analyze: ${error.message}
+                        </div>
+                    `;
+                } finally {
+                    aiAnalyzeBtn.disabled = false;
+                    aiAnalyzeBtn.textContent = '✨ Analyze with AI';
+                }
+            });
+        }
+
+        function displayAIResults(data) {
+            const aiContent = document.getElementById('aiContent');
+
+            let html = `
+                <h3 style="color: #333; margin-bottom: 15px;">📊 Analysis Results</h3>
+            `;
+
+            if (data.document_type) {
+                html += `<p><strong>Document Type:</strong> ${data.document_type}</p>`;
+            }
+
+            if (data.structure) {
+                html += `<p><strong>Structure:</strong> ${data.structure}</p>`;
+            }
+
+            if (data.total_pages) {
+                html += `<p><strong>Total Pages:</strong> ${data.total_pages}</p>`;
+            }
+
+            if (data.suggestions && data.suggestions.length > 0) {
+                html += `<h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">💡 Splitting Suggestions</h4>`;
+
+                data.suggestions.forEach((suggestion, index) => {
+                    const suggestionData = JSON.stringify({
+                        name: suggestion.name || `Suggestion ${index + 1}`,
+                        pages: suggestion.page_ranges,
+                        description: suggestion.description,
+                        sections: suggestion.sections || []
+                    }).replace(/"/g, '&quot;');
+
+                    const hasSections = suggestion.sections && suggestion.sections.length > 0;
+                    const sectionCount = hasSections ? suggestion.sections.length : 1;
+
+                    html += `
+                        <div class="suggestion-card" onclick='applySuggestion(${suggestionData})'>
+                            <h3>${suggestion.name || `Suggestion ${index + 1}`}</h3>
+                            <p>${suggestion.description}</p>
+                            <div class="pages">Pages: ${suggestion.page_ranges}</div>
+                    `;
+
+                    if (hasSections) {
+                        html += `<div class="section-list">`;
+                        suggestion.sections.forEach(section => {
+                            html += `<div class="section-item">• ${section.name}: Pages ${section.pages}</div>`;
+                        });
+                        html += `</div>`;
+                        html += `<p style="margin-top: 15px; font-size: 13px; color: #f5576c; font-weight: 600;">📦 Will create ${sectionCount} separate PDF files</p>`;
+                    }
+
+                    html += `
+                            <p style="margin-top: 10px; font-size: 12px; color: #667eea; font-weight: 600;">✨ Click to extract ${hasSections ? sectionCount + ' PDFs' : 'automatically'}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            if (data.raw_response) {
+                html += `
+                    <details style="margin-top: 20px;">
+                        <summary style="cursor: pointer; color: #666;">View raw AI response</summary>
+                        <pre style="white-space: pre-wrap; background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 10px;">${data.raw_response}</pre>
+                    </details>
+                `;
+            }
+
+            aiContent.innerHTML = html;
+        }
+
+        let currentPdfFile = null;  // Store the uploaded PDF file
+
+        function applySuggestion(suggestion) {
+            const hasSections = suggestion.sections && suggestion.sections.length > 0;
+            const fileCount = hasSections ? suggestion.sections.length : 1;
+
+            // Show confirmation dialog
+            let confirmMsg;
+            if (hasSections) {
+                confirmMsg = `Split into ${fileCount} separate PDF files?\n\n${suggestion.name}\n${suggestion.description}\n\n`;
+                confirmMsg += `This will create:\n`;
+                suggestion.sections.forEach(section => {
+                    confirmMsg += `• ${section.name} (Pages ${section.pages})\n`;
+                });
+                confirmMsg += `\nAll files will be downloaded as a ZIP archive.`;
+            } else {
+                confirmMsg = `Extract pages ${suggestion.pages}?\n\n${suggestion.name}\n${suggestion.description}\n\nThis will download the extracted PDF immediately.`;
+            }
+
+            if (confirm(confirmMsg)) {
+                // Check if we have the PDF file
+                const aiFileInput = document.getElementById('ai_pdf_file');
+                if (!aiFileInput || !aiFileInput.files || aiFileInput.files.length === 0) {
+                    alert('Please upload a PDF file first in the AI Analysis tab.');
+                    return;
+                }
+
+                // Show loading state
+                const loadingDiv = document.createElement('div');
+                loadingDiv.id = 'extractLoading';
+                loadingDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 9999; text-align: center;';
+                loadingDiv.innerHTML = `
+                    <div class="spinner"></div>
+                    <p style="margin-top: 20px; color: #667eea; font-weight: 600;">${hasSections ? `Creating ${fileCount} PDF files...` : `Extracting pages ${suggestion.pages}...`}</p>
+                `;
+                document.body.appendChild(loadingDiv);
+
+                if (hasSections) {
+                    // Split into multiple PDFs
+                    const formData = new FormData();
+                    formData.append('pdf_file', aiFileInput.files[0]);
+                    formData.append('sections', JSON.stringify(suggestion.sections));
+
+                    fetch('/split-multiple', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Split failed');
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        // Remove loading
+                        document.body.removeChild(loadingDiv);
+
+                        // Download the ZIP file
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${suggestion.name.replace(/[^a-z0-9]/gi, '_')}.zip`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        alert(`✅ Successfully created ${fileCount} PDF files!\n\nDownloaded as a ZIP file. Extract it to see all PDFs.`);
+                    })
+                    .catch(error => {
+                        document.body.removeChild(loadingDiv);
+                        alert('❌ Error creating PDF files. Please try again.');
+                        console.error('Split error:', error);
+                    });
+                } else {
+                    // Single PDF extraction
+                    const formData = new FormData();
+                    formData.append('pdf_file', aiFileInput.files[0]);
+                    formData.append('pages', suggestion.pages);
+
+                    fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Extraction failed');
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        // Remove loading
+                        document.body.removeChild(loadingDiv);
+
+                        // Download the file
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `extracted_${suggestion.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        alert(`✅ Successfully extracted pages ${suggestion.pages}!\n\nCheck your downloads folder.`);
+                    })
+                    .catch(error => {
+                        document.body.removeChild(loadingDiv);
+                        alert('❌ Error extracting pages. Please try again or use Manual Split.');
+                        console.error('Extraction error:', error);
+                    });
+                }
+            }
+        }
+
+        // Manual form submission
+        const uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) {
+            const submitBtn = document.getElementById('submitBtn');
+            uploadForm.addEventListener('submit', function() {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+@echo off
+REM Template for Anthropic Claude 3.5 Sonnet
+REM Copy this file to START_WEBSITE_WITH_ANTHROPIC.bat and add your API key
+
+REM Get your API key from: https://console.anthropic.com/settings/keys
+set ANTHROPIC_API_KEY=your-anthropic-api-key-here
+set AI_PROVIDER=anthropic
+
+echo ============================================================
+echo PDF PAGE EXTRACTOR WEB APPLICATION
+echo ============================================================
+echo.
+echo Starting server with Claude 3.5 Sonnet...
+echo Open your browser and go to: http://localhost:5000
+echo.
+echo Press Ctrl+C to stop the server
+echo ============================================================
+echo.
+
+start http://localhost:5000
+python app.py
+
+pause

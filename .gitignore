@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flask
+instance/
+.webassets-cache
+
+# Environment variables (IMPORTANT: Contains API keys)
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploaded files and temporary files
+uploads/
+temp/
+*.pdf
+
+# Batch files with API keys (we'll create safe versions)
+START_WEBSITE_WITH_AI.bat
+START_WEBSITE_WITH_DEEPSEEK.bat
+START_WEBSITE_WITH_ANTHROPIC.bat
+START_WEBSITE_WITH_OLLAMA.bat
+
+# Windows reserved filename
+nul
+
+# Claude Code settings (may contain API keys)
+.claude/
+.claude/settings.local.json

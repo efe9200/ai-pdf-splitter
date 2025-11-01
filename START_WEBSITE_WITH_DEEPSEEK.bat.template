@@ -1,0 +1,23 @@
+@echo off
+REM Template for DeepSeek (97% cheaper than OpenAI)
+REM Copy this file to START_WEBSITE_WITH_DEEPSEEK.bat and add your API key
+
+REM Get your API key from: https://platform.deepseek.com/api_keys
+set DEEPSEEK_API_KEY=your-deepseek-api-key-here
+set AI_PROVIDER=deepseek
+
+echo ============================================================
+echo PDF PAGE EXTRACTOR WEB APPLICATION
+echo ============================================================
+echo.
+echo Starting server with DeepSeek (Low Cost AI)...
+echo Open your browser and go to: http://localhost:5000
+echo.
+echo Press Ctrl+C to stop the server
+echo ============================================================
+echo.
+
+start http://localhost:5000
+python app.py
+
+pause

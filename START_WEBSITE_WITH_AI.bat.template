@@ -1,0 +1,23 @@
+@echo off
+REM Template for OpenAI GPT-4o-mini
+REM Copy this file to START_WEBSITE_WITH_AI.bat and add your API key
+
+REM Get your API key from: https://platform.openai.com/api-keys
+set OPENAI_API_KEY=your-openai-api-key-here
+set AI_PROVIDER=openai
+
+echo ============================================================
+echo PDF PAGE EXTRACTOR WEB APPLICATION
+echo ============================================================
+echo.
+echo Starting server with OpenAI GPT-4o-mini...
+echo Open your browser and go to: http://localhost:5000
+echo.
+echo Press Ctrl+C to stop the server
+echo ============================================================
+echo.
+
+start http://localhost:5000
+python app.py
+
+pause
