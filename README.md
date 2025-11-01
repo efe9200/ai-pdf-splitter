@@ -22,7 +22,32 @@ A powerful web application that uses AI to intelligently analyze and split PDF d
 - **Instant Download**: Extract and download in seconds
 - **Custom Naming**: Name each section in multiple files mode
 
-## Installation
+## Quick Start (Windows)
+
+### Easy Installation (Recommended)
+
+1. **Download the project:**
+   - Click the green "Code" button → "Download ZIP"
+   - Extract the ZIP file to your desired location
+
+2. **Run the setup:**
+   - Double-click `SETUP.bat`
+   - Follow the on-screen instructions
+   - The setup will:
+     - Install all required packages
+     - Create a desktop icon
+     - Optionally configure AI provider
+
+3. **Launch the app:**
+   - Double-click "AI PDF Splitter" icon on your desktop
+   - Or double-click any `START_WEBSITE_WITH_*.bat` file
+   - Your browser will open automatically
+
+That's it! The app is ready to use.
+
+---
+
+## Manual Installation (Advanced Users)
 
 ### Prerequisites
 - Python 3.7 or higher
@@ -30,7 +55,7 @@ A powerful web application that uses AI to intelligently analyze and split PDF d
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/YOUR-USERNAME/ai-pdf-splitter.git
+git clone https://github.com/efe9200/ai-pdf-splitter.git
 cd ai-pdf-splitter
 ```
 

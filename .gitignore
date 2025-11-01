@@ -59,3 +59,9 @@ nul
 # Claude Code settings (may contain API keys)
 .claude/
 .claude/settings.local.json
+
+# Desktop shortcuts created by setup
+*.lnk
+
+# Keep icon file (needed for users)
+!pdf_splitter_icon.ico
